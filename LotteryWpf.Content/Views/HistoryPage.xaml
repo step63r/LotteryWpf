@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="LotteryWpf.Content.Views.LotteryPage"
+﻿<UserControl x:Class="LotteryWpf.Content.Views.HistoryPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/"
@@ -12,12 +12,23 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-
+        
         <Grid Grid.Row="0" Margin="5">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Text="{Binding CurrentPrize}" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,10" />
-                <Button Content="ストップ" Command="{Binding StopCommand}" Width="200" Height="100" />
-            </StackPanel>
+            <ItemsControl ItemsSource="{Binding LotteryResults}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="{Binding UserName}" />
+                            <TextBlock Text="{Binding PrizeName}" Margin="10,0,0,0" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </Grid>
 
         <Grid Grid.Row="1" Margin="5">

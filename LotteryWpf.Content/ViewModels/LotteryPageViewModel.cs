@@ -1,4 +1,5 @@
 ﻿using LotteryWpf.Common;
+using LotteryWpf.Content.Views;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -10,7 +11,7 @@ using System.Windows.Threading;
 
 namespace LotteryWpf.Content.ViewModels
 {
-    public class LotteryPageViewModel : BindableBase
+    public class LotteryPageViewModel : BindableBase, IRegionMemberLifetime
     {
         #region インタフェース
         /// <summary>
@@ -28,6 +29,11 @@ namespace LotteryWpf.Content.ViewModels
         /// ストップコマンド
         /// </summary>
         public DelegateCommand StopCommand { get; private set; }
+
+        /// <summary>
+        /// 戻るコマンド
+        /// </summary>
+        public DelegateCommand GoBackCommand { get; private set; }
 
         private string _currentUserName;
         /// <summary>
@@ -58,6 +64,11 @@ namespace LotteryWpf.Content.ViewModels
             get { return _isStopped; }
             set { SetProperty(ref _isStopped, value); }
         }
+        
+        /// <summary>
+        /// インスタンスを使い回すか
+        /// </summary>
+        public bool KeepAlive { get; } = false;
         #endregion
 
         /// <summary>
@@ -95,6 +106,7 @@ namespace LotteryWpf.Content.ViewModels
             // コマンドを定義
             StopCommand = new DelegateCommand(ExecuteStopCommand, CanExecuteStopCommand);
             StopCommand.ObservesProperty(() => IsStopped);
+            GoBackCommand = new DelegateCommand(ExecuteGoBackCommand);
 
             // xmlから残った賞品を取得
             _sessionInfo = XmlConverter.DeSerialize<SessionInfo>(_configPath);
@@ -163,6 +175,14 @@ namespace LotteryWpf.Content.ViewModels
         private bool CanExecuteStopCommand()
         {
             return !_isStopped;
+        }
+
+        /// <summary>
+        /// 戻る
+        /// </summary>
+        private void ExecuteGoBackCommand()
+        {
+            _regionManager.RequestNavigate("ContentRegion", nameof(TopPage));
         }
     }
 }

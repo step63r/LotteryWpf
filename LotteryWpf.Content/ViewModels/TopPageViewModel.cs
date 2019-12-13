@@ -4,10 +4,11 @@ using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
 using Prism.Regions;
+using System.Collections.Generic;
 
 namespace LotteryWpf.Content.ViewModels
 {
-    public class TopPageViewModel : BindableBase
+    public class TopPageViewModel : BindableBase, IRegionMemberLifetime
     {
         #region インタフェース
         /// <summary>
@@ -26,6 +27,11 @@ namespace LotteryWpf.Content.ViewModels
         /// </summary>
         public DelegateCommand StartCommand { get; private set; }
 
+        /// <summary>
+        /// 当選履歴確認コマンド
+        /// </summary>
+        public DelegateCommand CheckHistoryCommand { get; private set; }
+
         private string _currentUserName;
         /// <summary>
         /// 現在の抽選者名
@@ -35,7 +41,22 @@ namespace LotteryWpf.Content.ViewModels
             get { return _currentUserName; }
             set { SetProperty(ref _currentUserName, value); }
         }
+
+        /// <summary>
+        /// インスタンスを使い回すか
+        /// </summary>
+        public bool KeepAlive { get; } = false;
         #endregion
+
+        /// <summary>
+        /// 設定情報ファイルパス
+        /// </summary>
+        private static string _configPath = string.Format(@"{0}\{1}", Path.BaseDir, Path.ConfigFileName);
+
+        /// <summary>
+        /// セッション情報
+        /// </summary>
+        private SessionInfo _sessionInfo;
 
         /// <summary>
         /// コンストラクタ
@@ -51,6 +72,32 @@ namespace LotteryWpf.Content.ViewModels
             // コマンドを定義
             StartCommand = new DelegateCommand(ExecuteStartCommand, CanExecuteStartCommand);
             StartCommand.ObservesProperty(() => CurrentUserName);
+            CheckHistoryCommand = new DelegateCommand(ExecuteCheckHistoryCommand, CanExecuteCheckHistoryCommand);
+
+            // 初期処理
+            CreateConfigFileIfNotExists();
+            _sessionInfo = XmlConverter.DeSerialize<SessionInfo>(_configPath);
+        }
+
+        /// <summary>
+        /// 設定ファイルがない場合作成する
+        /// </summary>
+        private void CreateConfigFileIfNotExists()
+        {
+            // ディレクトリ取得
+            var dirInfo = System.IO.Path.GetDirectoryName(_configPath);
+            System.IO.Directory.CreateDirectory(dirInfo);
+
+            // ファイルが存在しなければ作る
+            if (!System.IO.File.Exists(_configPath))
+            {
+                _sessionInfo = new SessionInfo()
+                {
+                    LotteryResults = new List<LotteryResult>(),
+                    Prizes = new List<string>()
+                };
+                XmlConverter.Serialize(_sessionInfo, _configPath);
+            }
         }
 
         /// <summary>
@@ -58,15 +105,33 @@ namespace LotteryWpf.Content.ViewModels
         /// </summary>
         private void ExecuteStartCommand()
         {
-            // 管理者判定
-            if (CurrentUserName.Equals(Admin.UserName))
+            // コマンド判定
+            switch (CurrentUserName)
             {
-                _regionManager.RequestNavigate("ContentRegion", nameof(AdminPage));
-            }
-            else
-            {
-                _regionManager.RequestNavigate("ContentRegion", nameof(LotteryPage));
-                _eventAggregator.GetEvent<MessageSentEvent>().Publish(CurrentUserName);
+                case Admin.UserName:
+                    _regionManager.RequestNavigate("ContentRegion", nameof(AdminPage));
+                    break;
+
+                case Admin.ClearSessionCommand:
+                    _sessionInfo = new SessionInfo()
+                    {
+                        LotteryResults = new List<LotteryResult>(),
+                        Prizes = new List<string>()
+                    };
+                    XmlConverter.Serialize(_sessionInfo, _configPath);
+                    CurrentUserName = "";
+                    break;
+
+                case Admin.ClearResultsCommand:
+                    _sessionInfo.LotteryResults.Clear();
+                    XmlConverter.Serialize(_sessionInfo, _configPath);
+                    CurrentUserName = "";
+                    break;
+
+                default:
+                    _regionManager.RequestNavigate("ContentRegion", nameof(LotteryPage));
+                    _eventAggregator.GetEvent<MessageSentEvent>().Publish(CurrentUserName);
+                    break;
             }
         }
 
@@ -77,6 +142,23 @@ namespace LotteryWpf.Content.ViewModels
         private bool CanExecuteStartCommand()
         {
             return !string.IsNullOrEmpty(CurrentUserName);
+        }
+
+        /// <summary>
+        /// 当選履歴確認を実行する
+        /// </summary>
+        private void ExecuteCheckHistoryCommand()
+        {
+            _regionManager.RequestNavigate("ContentRegion", nameof(HistoryPage));
+        }
+
+        /// <summary>
+        /// 当選履歴確認が実行可能かどうかを判定する
+        /// </summary>
+        /// <returns></returns>
+        private bool CanExecuteCheckHistoryCommand()
+        {
+            return true;
         }
     }
 }

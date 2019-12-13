@@ -11,6 +11,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <ListView ItemsSource="{Binding Prizes}" />
@@ -21,6 +22,9 @@
                     <KeyBinding Gesture="Enter" Command="{Binding RegisterCommand}" />
                 </TextBox.InputBindings>
             </TextBox>
+        </Grid>
+        <Grid Grid.Row="2" Margin="5">
+            <Button Content="戻る" Command="{Binding GoBackCommand}" HorizontalAlignment="Left" />
         </Grid>
     </Grid>
 </UserControl>

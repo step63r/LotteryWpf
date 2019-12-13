@@ -17,6 +17,7 @@ namespace LotteryWpf.Content
         {
             containerRegistry.RegisterForNavigation<LotteryPage>();
             containerRegistry.RegisterForNavigation<AdminPage>();
+            containerRegistry.RegisterForNavigation<HistoryPage>();
         }
     }
 }

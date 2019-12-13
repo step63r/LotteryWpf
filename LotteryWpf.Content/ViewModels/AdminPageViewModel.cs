@@ -1,4 +1,5 @@
 ﻿using LotteryWpf.Common;
+using LotteryWpf.Content.Views;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -26,6 +27,11 @@ namespace LotteryWpf.Content.ViewModels
         /// 登録コマンド
         /// </summary>
         public DelegateCommand RegisterCommand { get; private set; }
+
+        /// <summary>
+        /// 戻るコマンド
+        /// </summary>
+        public DelegateCommand GoBackCommand { get; private set; }
 
         private string _inputPrize;
         /// <summary>
@@ -67,6 +73,7 @@ namespace LotteryWpf.Content.ViewModels
             // コマンドを定義
             RegisterCommand = new DelegateCommand(ExecuteRegisterCommand, CanExecuteRegisterCommand);
             RegisterCommand.ObservesProperty(() => InputPrize);
+            GoBackCommand = new DelegateCommand(ExecuteGoBackCommand);
 
             // xmlを読み込み
             _sessionInfo = XmlConverter.DeSerialize<SessionInfo>(_configPath);
@@ -111,6 +118,14 @@ namespace LotteryWpf.Content.ViewModels
         private bool CanExecuteRegisterCommand()
         {
             return !string.IsNullOrEmpty(InputPrize);
+        }
+
+        /// <summary>
+        /// 戻る
+        /// </summary>
+        private void ExecuteGoBackCommand()
+        {
+            _regionManager.RequestNavigate("ContentRegion", nameof(TopPage));
         }
     }
 }

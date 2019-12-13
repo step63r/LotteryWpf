@@ -22,6 +22,17 @@ namespace LotteryWpf.Common
     /// </summary>
     public static class Admin
     {
-        public static string UserName = "admin";
+        /// <summary>
+        /// 管理者名
+        /// </summary>
+        public const string UserName = "admin";
+        /// <summary>
+        /// セッションクリアコマンド
+        /// </summary>
+        public const string ClearSessionCommand = "session/clear";
+        /// <summary>
+        /// 当選結果クリアコマンド
+        /// </summary>
+        public const string ClearResultsCommand = "results/clear";
     }
 }

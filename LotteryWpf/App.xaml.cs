@@ -1,4 +1,5 @@
 ﻿using LotteryWpf.Content;
+using LotteryWpf.Content.Views;
 using LotteryWpf.Views;
 using Prism.Ioc;
 using Prism.Modularity;
@@ -18,7 +19,10 @@ namespace LotteryWpf
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-
+            containerRegistry.RegisterForNavigation<TopPage>();
+            containerRegistry.RegisterForNavigation<LotteryPage>();
+            containerRegistry.RegisterForNavigation<AdminPage>();
+            containerRegistry.RegisterForNavigation<HistoryPage>();
         }
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)

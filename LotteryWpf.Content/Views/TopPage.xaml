@@ -9,8 +9,9 @@
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBox Text="{Binding CurrentUserName}" Width="200" Margin="0,0,0,10" />
-            <Button Content="開始" Command="{Binding StartCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" />
+            <TextBox Text="{Binding CurrentUserName, UpdateSourceTrigger=PropertyChanged}" Width="200" Margin="0,0,0,10" />
+            <Button Content="開始" Command="{Binding StartCommand}" Width="200" Margin="0,0,0,10" />
+            <Button Content="当選履歴確認" Command="{Binding CheckHistoryCommand}" Width="200" />
         </StackPanel>
     </Grid>
 </UserControl>
