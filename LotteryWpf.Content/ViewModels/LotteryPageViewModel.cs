@@ -1,9 +1,11 @@
-﻿using Prism.Commands;
+﻿using LotteryWpf.Common;
+using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
 using Prism.Regions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Threading;
 
 namespace LotteryWpf.Content.ViewModels
@@ -27,6 +29,16 @@ namespace LotteryWpf.Content.ViewModels
         /// </summary>
         public DelegateCommand StopCommand { get; private set; }
 
+        private string _currentUserName;
+        /// <summary>
+        /// 現在の抽選者名
+        /// </summary>
+        public string CurrentUserName
+        {
+            get { return _currentUserName; }
+            set { SetProperty(ref _currentUserName, value); }
+        }
+
         private string _currentPrize;
         /// <summary>
         /// 現在の賞品
@@ -49,6 +61,16 @@ namespace LotteryWpf.Content.ViewModels
         #endregion
 
         /// <summary>
+        /// 設定情報ファイルパス
+        /// </summary>
+        private static string _configPath = string.Format(@"{0}\{1}", Path.BaseDir, Path.ConfigFileName);
+
+        /// <summary>
+        /// セッション情報
+        /// </summary>
+        private SessionInfo _sessionInfo;
+
+        /// <summary>
         /// WPFタイマ
         /// </summary>
         private DispatcherTimer _dispatcherTimer;
@@ -56,7 +78,7 @@ namespace LotteryWpf.Content.ViewModels
         /// <summary>
         /// 残っている賞品一覧
         /// </summary>
-        private List<string> _remainedPrizes = new List<string>() { "aaa", "bbb", "ccc", "ddd", "eee" };
+        private List<string> _remainedPrizes = new List<string>();
 
         /// <summary>
         /// コンストラクタ
@@ -68,16 +90,33 @@ namespace LotteryWpf.Content.ViewModels
             // インタフェースを受け取る
             _regionManager = regionManager;
             _eventAggregator = eventAggregator;
+            _eventAggregator.GetEvent<MessageSentEvent>().Subscribe(CurrentUserNameReceived);
 
             // コマンドを定義
             StopCommand = new DelegateCommand(ExecuteStopCommand, CanExecuteStopCommand);
             StopCommand.ObservesProperty(() => IsStopped);
 
             // xmlから残った賞品を取得
-            // TODO
+            _sessionInfo = XmlConverter.DeSerialize<SessionInfo>(_configPath);
+            var exceptList = new List<string>();
+            foreach (var result in _sessionInfo.LotteryResults)
+            {
+                exceptList.Add(result.PrizeName);
+            }
+            // TODO: 同じ文字列があった場合の対策
+            _remainedPrizes = _sessionInfo.Prizes.Except(exceptList).ToList();
 
             // 抽選開始
             Loaded();
+        }
+
+        /// <summary>
+        /// 抽選者名取得イベント
+        /// </summary>
+        /// <param name="message"></param>
+        private void CurrentUserNameReceived(string message)
+        {
+            CurrentUserName = message;
         }
 
         /// <summary>
@@ -113,7 +152,12 @@ namespace LotteryWpf.Content.ViewModels
             IsStopped = true;
 
             // 抽選結果をxmlに保存
-            // TODO
+            _sessionInfo.LotteryResults.Add(new LotteryResult()
+            {
+                UserName = CurrentUserName,
+                PrizeName = CurrentPrize
+            });
+            XmlConverter.Serialize(_sessionInfo, _configPath);
         }
 
         private bool CanExecuteStopCommand()

@@ -1,4 +1,4 @@
-﻿namespace LotteryWpf.Models
+﻿namespace LotteryWpf.Common
 {
     /// <summary>
     /// 抽選結果クラス

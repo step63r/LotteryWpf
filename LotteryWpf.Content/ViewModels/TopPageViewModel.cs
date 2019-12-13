@@ -1,4 +1,5 @@
-﻿using LotteryWpf.Content.Views;
+﻿using LotteryWpf.Common;
+using LotteryWpf.Content.Views;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -57,7 +58,16 @@ namespace LotteryWpf.Content.ViewModels
         /// </summary>
         private void ExecuteStartCommand()
         {
-            _regionManager.RequestNavigate("ContentRegion", nameof(LotteryPage));
+            // 管理者判定
+            if (CurrentUserName.Equals(Admin.UserName))
+            {
+                _regionManager.RequestNavigate("ContentRegion", nameof(AdminPage));
+            }
+            else
+            {
+                _regionManager.RequestNavigate("ContentRegion", nameof(LotteryPage));
+                _eventAggregator.GetEvent<MessageSentEvent>().Publish(CurrentUserName);
+            }
         }
 
         /// <summary>

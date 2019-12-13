@@ -16,6 +16,7 @@ namespace LotteryWpf.Content
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterForNavigation<LotteryPage>();
+            containerRegistry.RegisterForNavigation<AdminPage>();
         }
     }
 }

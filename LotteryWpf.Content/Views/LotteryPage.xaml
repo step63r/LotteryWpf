@@ -9,7 +9,7 @@
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock Text="{Binding CurrentPrize}" TextWrapping="Wrap" Margin="0,0,0,10" />
+            <TextBlock Text="{Binding CurrentPrize}" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,10" />
             <Button Content="ストップ" Command="{Binding StopCommand}" Width="200" Height="100" />
         </StackPanel>
     </Grid>

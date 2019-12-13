@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LotteryWpf.Models
+namespace LotteryWpf.Common
 {
     /// <summary>
     /// セッション情報クラス

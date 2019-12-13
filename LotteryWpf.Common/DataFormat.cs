@@ -1,0 +1,27 @@
+﻿using System;
+
+namespace LotteryWpf.Common
+{
+    /// <summary>
+    /// パス設定
+    /// </summary>
+    public static class Path
+    {
+        /// <summary>
+        /// 基底ディレクトリ
+        /// </summary>
+        public static string BaseDir = string.Format(@"{0}\LotteryWpf", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
+        /// <summary>
+        /// 設定ファイル名
+        /// </summary>
+        public static string ConfigFileName = @"config.xml";
+    }
+
+    /// <summary>
+    /// 管理者設定
+    /// </summary>
+    public static class Admin
+    {
+        public static string UserName = "admin";
+    }
+}
