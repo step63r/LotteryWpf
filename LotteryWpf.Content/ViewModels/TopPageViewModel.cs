@@ -42,6 +42,26 @@ namespace LotteryWpf.Content.ViewModels
             set { SetProperty(ref _currentUserName, value); }
         }
 
+        private int _remainCount;
+        /// <summary>
+        /// 残り賞品数
+        /// </summary>
+        public int RemainCount
+        {
+            get { return _remainCount; }
+            set { SetProperty(ref _remainCount, value); }
+        }
+
+        private bool _isRemainValid;
+        /// <summary>
+        /// 残り賞品数が妥当か
+        /// </summary>
+        public bool IsRemainValid
+        {
+            get { return _isRemainValid; }
+            set { SetProperty(ref _isRemainValid, value); }
+        }
+
         /// <summary>
         /// インスタンスを使い回すか
         /// </summary>
@@ -72,11 +92,21 @@ namespace LotteryWpf.Content.ViewModels
             // コマンドを定義
             StartCommand = new DelegateCommand(ExecuteStartCommand, CanExecuteStartCommand);
             StartCommand.ObservesProperty(() => CurrentUserName);
+            StartCommand.ObservesProperty(() => RemainCount);
             CheckHistoryCommand = new DelegateCommand(ExecuteCheckHistoryCommand, CanExecuteCheckHistoryCommand);
 
             // 初期処理
             CreateConfigFileIfNotExists();
             _sessionInfo = XmlConverter.DeSerialize<SessionInfo>(_configPath);
+
+            // 残り賞品数
+            UpdateRemainCount();
+        }
+
+        private void UpdateRemainCount()
+        {
+            RemainCount = _sessionInfo.Prizes.Count - _sessionInfo.LotteryResults.Count;
+            IsRemainValid = RemainCount <= 0;
         }
 
         /// <summary>
@@ -119,12 +149,14 @@ namespace LotteryWpf.Content.ViewModels
                         Prizes = new List<string>()
                     };
                     XmlConverter.Serialize(_sessionInfo, _configPath);
+                    UpdateRemainCount();
                     CurrentUserName = "";
                     break;
 
                 case Admin.ClearResultsCommand:
                     _sessionInfo.LotteryResults.Clear();
                     XmlConverter.Serialize(_sessionInfo, _configPath);
+                    UpdateRemainCount();
                     CurrentUserName = "";
                     break;
 
@@ -141,7 +173,7 @@ namespace LotteryWpf.Content.ViewModels
         /// <returns></returns>
         private bool CanExecuteStartCommand()
         {
-            return !string.IsNullOrEmpty(CurrentUserName);
+            return !string.IsNullOrEmpty(CurrentUserName) && RemainCount > 0;
         }
 
         /// <summary>

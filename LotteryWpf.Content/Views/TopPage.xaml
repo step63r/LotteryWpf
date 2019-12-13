@@ -7,11 +7,23 @@
              mc:Ignorable="d"
              d:DesignHeight="600" d:DesignWidth="1024"
              prism:ViewModelLocator.AutoWireViewModel="True">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibleConv" />
+    </UserControl.Resources>
     <Grid>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBox Text="{Binding CurrentUserName, UpdateSourceTrigger=PropertyChanged}" Width="200" Margin="0,0,0,10" />
-            <Button Content="開始" Command="{Binding StartCommand}" Width="200" Margin="0,0,0,10" />
-            <Button Content="当選履歴確認" Command="{Binding CheckHistoryCommand}" Width="200" />
-        </StackPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Margin="5">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBox Text="{Binding CurrentUserName, UpdateSourceTrigger=PropertyChanged}" Width="200" Margin="0,0,0,10" />
+                <Button Content="開始" Command="{Binding StartCommand}" Width="200" Margin="0,0,0,10" />
+                <Button Content="当選履歴確認" Command="{Binding CheckHistoryCommand}" Width="200" />
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1" Margin="5">
+            <TextBlock Text="残り賞品がありません" HorizontalAlignment="Right" Visibility="{Binding IsRemainValid, Converter={StaticResource BoolToVisibleConv}}" />
+        </Grid>
     </Grid>
 </UserControl>
