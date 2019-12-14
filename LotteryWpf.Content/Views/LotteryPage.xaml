@@ -2,10 +2,11 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             d:DesignHeight="600" d:DesignWidth="1024"
+             d:DesignHeight="768" d:DesignWidth="1024"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
         <Grid.RowDefinitions>
@@ -15,13 +16,13 @@
 
         <Grid Grid.Row="0" Margin="5">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Text="{Binding CurrentPrize}" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,10" />
-                <Button Content="ストップ" Command="{Binding StopCommand}" Width="200" Height="100" />
+                <TextBlock Text="{Binding CurrentPrize}" HorizontalAlignment="Center" FontSize="64" TextWrapping="Wrap" Margin="0,0,0,40" />
+                <Button Content="ストップ" Style="{StaticResource MaterialDesignRaisedButton}" Command="{Binding StopCommand}" FontSize="24" Width="400" Height="200" />
             </StackPanel>
         </Grid>
 
         <Grid Grid.Row="1" Margin="5">
-            <Button Content="戻る" Command="{Binding GoBackCommand}" HorizontalAlignment="Left" />
+            <Button Content="戻る" Style="{StaticResource MaterialDesignRaisedAccentButton}" Command="{Binding GoBackCommand}" HorizontalAlignment="Left" />
         </Grid>
     </Grid>
 </UserControl>

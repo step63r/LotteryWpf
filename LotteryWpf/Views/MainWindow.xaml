@@ -2,8 +2,15 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:prism="http://prismlibrary.com/"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="24"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
         prism:ViewModelLocator.AutoWireViewModel="True"
-        Title="{Binding Title}" Height="350" Width="525">
+        Title="{Binding Title}" Height="768" Width="1024">
     <Grid>
         <ContentControl prism:RegionManager.RegionName="ContentRegion" />
     </Grid>

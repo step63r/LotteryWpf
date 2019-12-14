@@ -5,27 +5,37 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             d:DesignHeight="600" d:DesignWidth="1024"
+             d:DesignHeight="768" d:DesignWidth="1024"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        
+
         <Grid Grid.Row="0" Margin="5">
-            <ItemsControl ItemsSource="{Binding LotteryResults}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
+            <ItemsControl ItemsSource="{Binding LotteryResults}" Grid.IsSharedSizeScope="True">
+                <ItemsControl.Template>
+                    <ControlTemplate TargetType="{x:Type ItemsControl}">
+                        <ScrollViewer Focusable="False" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                            <StackPanel IsItemsHost="True" />
+                        </ScrollViewer>
+                    </ControlTemplate>
+                </ItemsControl.Template>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel>
-                            <TextBlock Text="{Binding UserName}" />
-                            <TextBlock Text="{Binding PrizeName}" Margin="10,0,0,0" />
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="UserName" />
+                                <ColumnDefinition Width="auto" SharedSizeGroup="PrizeName" />
+                            </Grid.ColumnDefinitions>
+                            <Grid Grid.Column="0">
+                                <TextBlock Text="{Binding UserName, StringFormat={}{0} さん}" Padding="10" />
+                            </Grid>
+                            <Grid Grid.Column="1">
+                                <TextBlock Text="{Binding PrizeName}" Padding="10" />
+                            </Grid>
+                        </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
