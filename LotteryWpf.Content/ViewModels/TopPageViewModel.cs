@@ -32,7 +32,7 @@ namespace LotteryWpf.Content.ViewModels
         /// </summary>
         public DelegateCommand CheckHistoryCommand { get; private set; }
 
-        private string _currentUserName;
+        private string _currentUserName = "";
         /// <summary>
         /// 現在の抽選者名
         /// </summary>
@@ -173,7 +173,7 @@ namespace LotteryWpf.Content.ViewModels
         /// <returns></returns>
         private bool CanExecuteStartCommand()
         {
-            return !string.IsNullOrEmpty(CurrentUserName) && RemainCount > 0;
+            return (!string.IsNullOrEmpty(CurrentUserName) && RemainCount > 0) || CurrentUserName.Equals(Admin.UserName);
         }
 
         /// <summary>
