@@ -125,5 +125,14 @@
       <Name>LotteryWpf.Common</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\roll-finish1.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\nc90552.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\nc179911.wav" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Threading;
+using System.Reflection;
+using System.Media;
 
 namespace LotteryWpf.Content.ViewModels
 {
@@ -92,6 +94,11 @@ namespace LotteryWpf.Content.ViewModels
         private List<string> _remainedPrizes = new List<string>();
 
         /// <summary>
+        /// サウンドプレイヤー
+        /// </summary>
+        private SoundPlayer _player;
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="regionManager"></param>
@@ -141,6 +148,11 @@ namespace LotteryWpf.Content.ViewModels
             _dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             _dispatcherTimer.Tick += new EventHandler(_dispatcherTimer_Tick);
             _dispatcherTimer.Start();
+
+            // ドラムロール開始
+            var stream = Properties.Resources.nc90552;
+            _player = new SoundPlayer(stream);
+            _player.PlayLooping();
         }
 
         /// <summary>
@@ -162,6 +174,12 @@ namespace LotteryWpf.Content.ViewModels
         {
             _dispatcherTimer.Stop();
             IsStopped = true;
+
+            // ドラムロール停止＆シンバル再生
+            _player.Stop();
+            var stream = Properties.Resources.roll_finish1;
+            _player = new SoundPlayer(stream);
+            _player.Play();
 
             // 抽選結果をxmlに保存
             _sessionInfo.LotteryResults.Add(new LotteryResult()
