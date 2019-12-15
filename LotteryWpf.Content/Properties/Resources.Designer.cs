@@ -63,6 +63,24 @@ namespace LotteryWpf.Content.Properties {
         /// <summary>
         ///   System.IO.MemoryStream に類似した型 System.IO.UnmanagedMemoryStream のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.IO.UnmanagedMemoryStream ban1 {
+            get {
+                return ResourceManager.GetStream("ban1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   System.IO.MemoryStream に類似した型 System.IO.UnmanagedMemoryStream のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream fanfare1 {
+            get {
+                return ResourceManager.GetStream("fanfare1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   System.IO.MemoryStream に類似した型 System.IO.UnmanagedMemoryStream のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.IO.UnmanagedMemoryStream nc179911 {
             get {
                 return ResourceManager.GetStream("nc179911", resourceCulture);

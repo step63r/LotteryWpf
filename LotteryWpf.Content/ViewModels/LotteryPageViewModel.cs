@@ -10,6 +10,9 @@ using System.Linq;
 using System.Windows.Threading;
 using System.Reflection;
 using System.Media;
+using System.Windows.Media.Animation;
+using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace LotteryWpf.Content.ViewModels
 {
@@ -27,6 +30,16 @@ namespace LotteryWpf.Content.ViewModels
         #endregion
 
         #region コマンド・プロパティ
+        private Brush _userControlBackground = new SolidColorBrush(Colors.Transparent);
+        /// <summary>
+        /// 背景
+        /// </summary>
+        public Brush UserControlBackground
+        {
+            get { return _userControlBackground; }
+            set { SetProperty(ref _userControlBackground, value); }
+        }
+
         /// <summary>
         /// ストップコマンド
         /// </summary>
@@ -66,7 +79,17 @@ namespace LotteryWpf.Content.ViewModels
             get { return _isStopped; }
             set { SetProperty(ref _isStopped, value); }
         }
-        
+
+        private bool _isVisibleStoryboard = false;
+        /// <summary>
+        /// ストーリーボードのGridを表示するか
+        /// </summary>
+        public bool IsVisibleStoryboard
+        {
+            get { return _isVisibleStoryboard; }
+            set { SetProperty(ref _isVisibleStoryboard, value); }
+        }
+
         /// <summary>
         /// インスタンスを使い回すか
         /// </summary>
@@ -167,6 +190,18 @@ namespace LotteryWpf.Content.ViewModels
             CurrentPrize = _remainedPrizes[index];
         }
 
+        private async Task RunStoryboard()
+        {
+            IsVisibleStoryboard = true;
+            var stream = Properties.Resources.nc179911;
+            _player = new SoundPlayer(stream);
+            await Task.Run(() =>
+            {
+                _player.PlaySync();
+            }).ConfigureAwait(false);
+            IsVisibleStoryboard = false;
+        }
+
         /// <summary>
         /// 抽選をストップする
         /// </summary>
@@ -174,12 +209,26 @@ namespace LotteryWpf.Content.ViewModels
         {
             _dispatcherTimer.Stop();
             IsStopped = true;
-
-            // ドラムロール停止＆シンバル再生
             _player.Stop();
-            var stream = Properties.Resources.roll_finish1;
-            _player = new SoundPlayer(stream);
-            _player.Play();
+
+            // デバッグ用
+            CurrentPrize = "1等";
+
+            // 当選順位によってSEを分ける
+            if (CurrentPrize.Equals("1等"))
+            {
+                _ = RunStoryboard();
+                UserControlBackground = new SolidColorBrush(Color.FromArgb(255, 255, 215, 0));
+                var stream = Properties.Resources.fanfare1;
+                _player = new SoundPlayer(stream);
+                _player.Play();
+            }
+            else
+            {
+                var stream = Properties.Resources.roll_finish1;
+                _player = new SoundPlayer(stream);
+                _player.Play();
+            }
 
             // 抽選結果をxmlに保存
             _sessionInfo.LotteryResults.Add(new LotteryResult()
@@ -200,6 +249,9 @@ namespace LotteryWpf.Content.ViewModels
         /// </summary>
         private void ExecuteGoBackCommand()
         {
+            _dispatcherTimer.Stop();
+            IsStopped = true;
+            _player.Stop();
             _regionManager.RequestNavigate("ContentRegion", nameof(TopPage));
         }
     }

@@ -7,22 +7,60 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              d:DesignHeight="768" d:DesignWidth="1024"
-             prism:ViewModelLocator.AutoWireViewModel="True">
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             Background="{Binding UserControlBackground}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/LotteryWpf.Content;component/Styles/Animations.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="auto" />
-        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="5">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Text="{Binding CurrentPrize}" HorizontalAlignment="Center" FontSize="64" TextWrapping="Wrap" Margin="0,0,0,40" />
-                <Button Content="ストップ" Style="{StaticResource MaterialDesignRaisedButton}" Command="{Binding StopCommand}" FontSize="24" Width="400" Height="200" />
-            </StackPanel>
+            <Grid Grid.Row="0" Margin="5">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding CurrentPrize}" HorizontalAlignment="Center" FontSize="64" TextWrapping="Wrap" Margin="0,0,0,40" />
+                    <Button Content="ストップ" Style="{StaticResource MaterialDesignRaisedButton}" Command="{Binding StopCommand}" FontSize="24" Width="400" Height="200" />
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="1" Margin="5">
+                <Button Content="戻る" Style="{StaticResource MaterialDesignRaisedAccentButton}" Command="{Binding GoBackCommand}" HorizontalAlignment="Left" />
+            </Grid>
         </Grid>
-
-        <Grid Grid.Row="1" Margin="5">
-            <Button Content="戻る" Style="{StaticResource MaterialDesignRaisedAccentButton}" Command="{Binding GoBackCommand}" HorizontalAlignment="Left" />
+        <Grid x:Name="StoryboardGrid" Visibility="{Binding IsVisibleStoryboard, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#FFFFFFFF" Offset="0.0000" />
+                    <GradientStop Color="#FFFFFFFF" Offset="0.1666" />
+                    <GradientStop Color="#FFFFFFFF" Offset="0.3332" />
+                    <GradientStop Color="#FFFFFFFF" Offset="0.4998" />
+                    <GradientStop Color="#FFFFFFFF" Offset="0.6664" />
+                    <GradientStop Color="#FFFFFFFF" Offset="0.8330" />
+                    <GradientStop Color="#FFFFFFFF" Offset="1.0000" />
+                </LinearGradientBrush>
+            </Grid.Background>
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsVisibleStoryboard}" Value="True">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard x:Name="GridStoryboard" Storyboard="{StaticResource RainbowGradientAnimation}" />
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                                <StopStoryboard BeginStoryboardName="GridStoryboard" />
+                            </DataTrigger.ExitActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
         </Grid>
     </Grid>
 </UserControl>
