@@ -2,6 +2,23 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:LotteryWpf.Content.Styles">
 
+    <!-- 点滅アニメーション -->
+    <Storyboard x:Key="TextFlashAnimation">
+        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" RepeatBehavior="Forever" AutoReverse="True">
+            <LinearDoubleKeyFrame KeyTime="0:0:0.2" Value="1" />
+            <LinearDoubleKeyFrame KeyTime="0:0:0.8" Value="0" />
+        </DoubleAnimationUsingKeyFrames>
+    </Storyboard>
+
+    <!-- 点滅するTextBlock -->
+    <Style TargetType="TextBlock" x:Key="TextBlockFlash">
+        <Style.Triggers>
+            <EventTrigger RoutedEvent="TextBlock.Loaded">
+                <BeginStoryboard Storyboard="{StaticResource TextFlashAnimation}" />
+            </EventTrigger>
+        </Style.Triggers>
+    </Style>
+    
     <!-- 虹色のアニメーション -->
     <Storyboard x:Key="RainbowGradientAnimation" RepeatBehavior="Forever">
         <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[0].(GradientStop.Color)">

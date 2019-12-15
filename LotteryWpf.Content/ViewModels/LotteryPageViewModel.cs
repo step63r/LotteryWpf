@@ -7,12 +7,10 @@ using Prism.Regions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Threading;
-using System.Reflection;
 using System.Media;
-using System.Windows.Media.Animation;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace LotteryWpf.Content.ViewModels
 {
@@ -30,16 +28,6 @@ namespace LotteryWpf.Content.ViewModels
         #endregion
 
         #region コマンド・プロパティ
-        private Brush _userControlBackground = new SolidColorBrush(Colors.Transparent);
-        /// <summary>
-        /// 背景
-        /// </summary>
-        public Brush UserControlBackground
-        {
-            get { return _userControlBackground; }
-            set { SetProperty(ref _userControlBackground, value); }
-        }
-
         /// <summary>
         /// ストップコマンド
         /// </summary>
@@ -90,6 +78,26 @@ namespace LotteryWpf.Content.ViewModels
             set { SetProperty(ref _isVisibleStoryboard, value); }
         }
 
+        private bool _isVisibleBigPanel = false;
+        /// <summary>
+        /// 確定演出用の大きいパネルを表示するか
+        /// </summary>
+        public bool IsVisibleBigPanel
+        {
+            get { return _isVisibleBigPanel; }
+            set { SetProperty(ref _isVisibleBigPanel, value); }
+        }
+
+        private Brush _bigPanelBackground = new SolidColorBrush(Colors.Transparent);
+        /// <summary>
+        /// 確定演出用の大きいパネルの背景色
+        /// </summary>
+        public Brush BigPanelBackground
+        {
+            get { return _bigPanelBackground; }
+            set { SetProperty(ref _bigPanelBackground, value); }
+        }
+
         /// <summary>
         /// インスタンスを使い回すか
         /// </summary>
@@ -100,24 +108,20 @@ namespace LotteryWpf.Content.ViewModels
         /// 設定情報ファイルパス
         /// </summary>
         private static string _configPath = string.Format(@"{0}\{1}", Path.BaseDir, Path.ConfigFileName);
-
         /// <summary>
         /// セッション情報
         /// </summary>
         private SessionInfo _sessionInfo;
-
         /// <summary>
         /// WPFタイマ
         /// </summary>
         private DispatcherTimer _dispatcherTimer;
-
         /// <summary>
         /// 残っている賞品一覧
         /// </summary>
         private List<string> _remainedPrizes = new List<string>();
-
         /// <summary>
-        /// サウンドプレイヤー
+        /// サウンドプレイヤー（DirectXが入っていないので多重再生は不可）
         /// </summary>
         private SoundPlayer _player;
 
@@ -190,16 +194,26 @@ namespace LotteryWpf.Content.ViewModels
             CurrentPrize = _remainedPrizes[index];
         }
 
-        private async Task RunStoryboard()
+        private async Task RunSpecialEffectAsync(Brush backgroundBrush)
         {
-            IsVisibleStoryboard = true;
-            var stream = Properties.Resources.nc179911;
-            _player = new SoundPlayer(stream);
             await Task.Run(() =>
             {
+                // ストーリーボード表示
+                IsVisibleStoryboard = true;
+                var stream = Properties.Resources.nc179911;
+                _player = new SoundPlayer(stream);
                 _player.PlaySync();
-            }).ConfigureAwait(false);
-            IsVisibleStoryboard = false;
+                IsVisibleStoryboard = false;
+
+                // 大きいパネル表示
+                BigPanelBackground = backgroundBrush;
+                IsVisibleBigPanel = true;
+                stream = Properties.Resources.fanfare1;
+                _player = new SoundPlayer(stream);
+
+                _player.PlaySync();
+                IsVisibleBigPanel = false;
+            });
         }
 
         /// <summary>
@@ -211,17 +225,21 @@ namespace LotteryWpf.Content.ViewModels
             IsStopped = true;
             _player.Stop();
 
-            // デバッグ用
-            CurrentPrize = "1等";
-
             // 当選順位によってSEを分ける
             if (CurrentPrize.Equals("1等"))
             {
-                _ = RunStoryboard();
-                UserControlBackground = new SolidColorBrush(Color.FromArgb(255, 255, 215, 0));
-                var stream = Properties.Resources.fanfare1;
-                _player = new SoundPlayer(stream);
-                _player.Play();
+                // 確定演出表示
+                _ = RunSpecialEffectAsync(new SolidColorBrush(Colors.LightGoldenrodYellow));
+            }
+            else if (CurrentPrize.Equals("2等"))
+            {
+                // 確定演出表示
+                _ = RunSpecialEffectAsync(new SolidColorBrush(Colors.WhiteSmoke));
+            }
+            else if (CurrentPrize.Equals("3等"))
+            {
+                // 確定演出表示
+                _ = RunSpecialEffectAsync(new SolidColorBrush(Colors.AntiqueWhite));
             }
             else
             {

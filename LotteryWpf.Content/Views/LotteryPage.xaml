@@ -7,8 +7,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              d:DesignHeight="768" d:DesignWidth="1024"
-             prism:ViewModelLocator.AutoWireViewModel="True"
-             Background="{Binding UserControlBackground}">
+             prism:ViewModelLocator.AutoWireViewModel="True">
     <UserControl.Resources>
         <ResourceDictionary>
             <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
@@ -35,6 +34,7 @@
                 <Button Content="戻る" Style="{StaticResource MaterialDesignRaisedAccentButton}" Command="{Binding GoBackCommand}" HorizontalAlignment="Left" />
             </Grid>
         </Grid>
+
         <Grid x:Name="StoryboardGrid" Visibility="{Binding IsVisibleStoryboard, Converter={StaticResource BoolToVisibilityConverter}}">
             <Grid.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -61,6 +61,19 @@
                     </Style.Triggers>
                 </Style>
             </Grid.Style>
+        </Grid>
+
+        <Grid Background="{Binding BigPanelBackground}" Visibility="{Binding IsVisibleBigPanel, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Margin="10">
+                <TextBlock Foreground="Black" Text="Congratulations!!" FontStyle="Italic" FontWeight="Bold" FontStretch="Expanded" FontFamily="Times New Roman" FontSize="80" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Grid>
+            <Grid Grid.Row="1" Margin="10">
+                <TextBlock Style="{StaticResource TextBlockFlash}" Text="{Binding CurrentPrize}" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="256" />
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>
