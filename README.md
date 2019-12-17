@@ -22,6 +22,24 @@ Fork and clone this repository.
 $ git clone https://github.com/step63r/LotteryWpf.git
 ```
 
+## For Application Users
+
+Download the latest installer from release page and install.
+
+You must set some configrations.
+
+Type ``admin`` at textbox of top page and press the button. You can register prizes at yourself.
+
+The ``確定演出を有効にする`` button means ``Enable Final Production``. When you hit the prize in lottery, special effect will be appeared.
+
+Here is more special command below.
+
+``sessions/clear`` means clear all session data.
+
+``prizes/clear`` means clear all prize data.
+
+Heve fun with this :)
+
 ## Contribution
 
 1. Fork this repository
@@ -33,6 +51,12 @@ $ git clone https://github.com/step63r/LotteryWpf.git
 ## License
 
 MIT License
+
+## Resources
+
+- Drum roll and Final production by [ニコニ･コモンズ](https://commons.nicovideo.jp/)
+- Roll finish by [効果音ラボ](https://soundeffect-lab.info/)
+- Fanfare by [nakano sound](http://www.nakano-sound.com/)
 
 ## Author
 
