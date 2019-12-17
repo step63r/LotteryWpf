@@ -1,4 +1,5 @@
 ﻿using LotteryWpf.Common;
+using LotteryWpf.Content.Services;
 using LotteryWpf.Content.Views;
 using Prism.Commands;
 using Prism.Events;
@@ -48,11 +49,11 @@ namespace LotteryWpf.Content.ViewModels
             set { SetProperty(ref _currentUserName, value); }
         }
 
-        private string _currentPrize;
+        private Prize _currentPrize;
         /// <summary>
         /// 現在の賞品
         /// </summary>
-        public string CurrentPrize
+        public Prize CurrentPrize
         {
             get { return _currentPrize; }
             set { SetProperty(ref _currentPrize, value); }
@@ -105,21 +106,13 @@ namespace LotteryWpf.Content.ViewModels
         #endregion
 
         /// <summary>
-        /// 設定情報ファイルパス
-        /// </summary>
-        private static string _configPath = string.Format(@"{0}\{1}", Path.BaseDir, Path.ConfigFileName);
-        /// <summary>
-        /// セッション情報
-        /// </summary>
-        private SessionInfo _sessionInfo;
-        /// <summary>
         /// WPFタイマ
         /// </summary>
         private DispatcherTimer _dispatcherTimer;
         /// <summary>
         /// 残っている賞品一覧
         /// </summary>
-        private List<string> _remainedPrizes = new List<string>();
+        private List<Prize> _remainedPrizes = new List<Prize>();
         /// <summary>
         /// サウンドプレイヤー（DirectXが入っていないので多重再生は不可）
         /// </summary>
@@ -142,15 +135,20 @@ namespace LotteryWpf.Content.ViewModels
             StopCommand.ObservesProperty(() => IsStopped);
             GoBackCommand = new DelegateCommand(ExecuteGoBackCommand);
 
-            // xmlから残った賞品を取得
-            _sessionInfo = XmlConverter.DeSerialize<SessionInfo>(_configPath);
-            var exceptList = new List<string>();
-            foreach (var result in _sessionInfo.LotteryResults)
+            // 残った賞品を取得
+            var exceptList = new List<Prize>();
+            foreach (var session in SessionsDataStore.GetSessions())
             {
-                exceptList.Add(result.PrizeName);
+                exceptList.Add(session.Prize);
             }
-            // TODO: 同じ文字列があった場合の対策
-            _remainedPrizes = _sessionInfo.Prizes.Except(exceptList).ToList();
+
+            foreach (var prize in PrizesDataStore.GetPrizes())
+            {
+                if (exceptList.Where(item => item.Guid == prize.Guid).FirstOrDefault() == null)
+                {
+                    _remainedPrizes.Add(prize);
+                }
+            }
 
             // 抽選開始
             Loaded();
@@ -225,22 +223,14 @@ namespace LotteryWpf.Content.ViewModels
             IsStopped = true;
             _player.Stop();
 
-            // 当選順位によってSEを分ける
-            if (CurrentPrize.Equals("1等"))
+            if (CurrentPrize.EnableFinalProduction)
             {
                 // 確定演出表示
                 _ = RunSpecialEffectAsync(new SolidColorBrush(Colors.LightGoldenrodYellow));
+                //_ = RunSpecialEffectAsync(new SolidColorBrush(Colors.WhiteSmoke));
+                //_ = RunSpecialEffectAsync(new SolidColorBrush(Colors.AntiqueWhite));
             }
-            else if (CurrentPrize.Equals("2等"))
-            {
-                // 確定演出表示
-                _ = RunSpecialEffectAsync(new SolidColorBrush(Colors.WhiteSmoke));
-            }
-            else if (CurrentPrize.Equals("3等"))
-            {
-                // 確定演出表示
-                _ = RunSpecialEffectAsync(new SolidColorBrush(Colors.AntiqueWhite));
-            }
+
             else
             {
                 var stream = Properties.Resources.roll_finish1;
@@ -249,12 +239,12 @@ namespace LotteryWpf.Content.ViewModels
             }
 
             // 抽選結果をxmlに保存
-            _sessionInfo.LotteryResults.Add(new LotteryResult()
+            SessionsDataStore.AddSession(new Session()
             {
+                Guid = Guid.NewGuid().ToString(),
                 UserName = CurrentUserName,
-                PrizeName = CurrentPrize
+                Prize = CurrentPrize
             });
-            XmlConverter.Serialize(_sessionInfo, _configPath);
         }
 
         private bool CanExecuteStopCommand()

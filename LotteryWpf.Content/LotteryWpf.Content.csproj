@@ -63,6 +63,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Services\ConfigDataStore.cs" />
+    <Compile Include="Services\PrizesDataStore.cs" />
+    <Compile Include="Services\SessionsDataStore.cs" />
     <Compile Include="ViewModels\AdminPageViewModel.cs" />
     <Compile Include="ViewModels\HistoryPageViewModel.cs" />
     <Compile Include="ViewModels\LotteryPageViewModel.cs" />

@@ -25,7 +25,7 @@
 
             <Grid Grid.Row="0" Margin="5">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Text="{Binding CurrentPrize}" HorizontalAlignment="Center" FontSize="64" TextWrapping="Wrap" Margin="0,0,0,40" />
+                    <TextBlock Text="{Binding CurrentPrize.Name}" HorizontalAlignment="Center" FontSize="64" TextWrapping="Wrap" Margin="0,0,0,40" />
                     <Button Content="ストップ" Style="{StaticResource MaterialDesignRaisedButton}" Command="{Binding StopCommand}" FontSize="24" Width="400" Height="200" />
                 </StackPanel>
             </Grid>
@@ -72,7 +72,7 @@
                 <TextBlock Foreground="Black" Text="Congratulations!!" FontStyle="Italic" FontWeight="Bold" FontStretch="Expanded" FontFamily="Times New Roman" FontSize="80" HorizontalAlignment="Center" VerticalAlignment="Center" />
             </Grid>
             <Grid Grid.Row="1" Margin="10">
-                <TextBlock Style="{StaticResource TextBlockFlash}" Text="{Binding CurrentPrize}" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="256" />
+                <TextBlock Style="{StaticResource TextBlockFlash}" Text="{Binding CurrentPrize.Name}" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="256" />
             </Grid>
         </Grid>
     </Grid>

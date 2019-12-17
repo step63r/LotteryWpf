@@ -12,27 +12,16 @@ namespace LotteryWpf.Common
         /// </summary>
         public static string BaseDir = string.Format(@"{0}\LotteryWpf", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
         /// <summary>
+        /// セッションファイル名
+        /// </summary>
+        public static string SessionsFileName = @"sessions.xml";
+        /// <summary>
+        /// 景品一覧ファイル名
+        /// </summary>
+        public static string PrizesFileName = @"prizes.xml";
+        /// <summary>
         /// 設定ファイル名
         /// </summary>
         public static string ConfigFileName = @"config.xml";
-    }
-
-    /// <summary>
-    /// 管理者設定
-    /// </summary>
-    public static class Admin
-    {
-        /// <summary>
-        /// 管理者名
-        /// </summary>
-        public const string UserName = "admin";
-        /// <summary>
-        /// セッションクリアコマンド
-        /// </summary>
-        public const string ClearSessionCommand = "session/clear";
-        /// <summary>
-        /// 当選結果クリアコマンド
-        /// </summary>
-        public const string ClearResultsCommand = "results/clear";
     }
 }

@@ -1,13 +1,11 @@
 ﻿using LotteryWpf.Common;
+using LotteryWpf.Content.Services;
 using LotteryWpf.Content.Views;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
 using Prism.Regions;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace LotteryWpf.Content.ViewModels
 {
@@ -33,23 +31,13 @@ namespace LotteryWpf.Content.ViewModels
         /// <summary>
         /// 当選結果一覧
         /// </summary>
-        public ObservableCollection<LotteryResult> LotteryResults { get; set; } = new ObservableCollection<LotteryResult>();
+        public ObservableCollection<Session> Sessions { get; set; } = new ObservableCollection<Session>();
 
         /// <summary>
         /// インスタンスを使い回すか
         /// </summary>
         public bool KeepAlive { get; } = false;
         #endregion
-
-        /// <summary>
-        /// 設定情報ファイルパス
-        /// </summary>
-        private static string _configPath = string.Format(@"{0}\{1}", Path.BaseDir, Path.ConfigFileName);
-
-        /// <summary>
-        /// セッション情報
-        /// </summary>
-        private SessionInfo _sessionInfo;
 
         /// <summary>
         /// コンストラクタ
@@ -66,10 +54,9 @@ namespace LotteryWpf.Content.ViewModels
             GoBackCommand = new DelegateCommand(ExecuteGoBackCommand);
 
             // セッション情報取得
-            _sessionInfo = XmlConverter.DeSerialize<SessionInfo>(_configPath);
-            foreach (var result in _sessionInfo.LotteryResults)
+            foreach (var result in SessionsDataStore.GetSessions())
             {
-                LotteryResults.Add(result);
+                Sessions.Add(result);
             }
         }
 

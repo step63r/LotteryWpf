@@ -1,10 +1,14 @@
 ﻿namespace LotteryWpf.Common
 {
     /// <summary>
-    /// 抽選結果クラス
+    /// セッション情報クラス
     /// </summary>
-    public class LotteryResult
+    public class Session
     {
+        /// <summary>
+        /// GUID
+        /// </summary>
+        public string Guid { get; set; } = "";
         /// <summary>
         /// 名前
         /// </summary>
@@ -12,6 +16,6 @@
         /// <summary>
         /// 賞品名
         /// </summary>
-        public string PrizeName { get; set; }
+        public Prize Prize { get; set; }
     }
 }

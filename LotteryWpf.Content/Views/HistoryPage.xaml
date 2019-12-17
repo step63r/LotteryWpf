@@ -14,7 +14,7 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Margin="5">
-            <ItemsControl ItemsSource="{Binding LotteryResults}" Grid.IsSharedSizeScope="True">
+            <ItemsControl ItemsSource="{Binding Sessions}" Grid.IsSharedSizeScope="True">
                 <ItemsControl.Template>
                     <ControlTemplate TargetType="{x:Type ItemsControl}">
                         <ScrollViewer Focusable="False" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
@@ -33,7 +33,7 @@
                                 <TextBlock Text="{Binding UserName, StringFormat={}{0} さん}" Padding="10" />
                             </Grid>
                             <Grid Grid.Column="1">
-                                <TextBlock Text="{Binding PrizeName}" Padding="10" />
+                                <TextBlock Text="{Binding Prize.Name}" Padding="10" />
                             </Grid>
                         </Grid>
                     </DataTemplate>

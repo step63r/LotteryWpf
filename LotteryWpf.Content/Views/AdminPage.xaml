@@ -14,14 +14,17 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
-            <ListView ItemsSource="{Binding Prizes}" />
+            <ListView ItemsSource="{Binding Prizes}" DisplayMemberPath="Name" />
         </Grid>
         <Grid Grid.Row="1">
-            <TextBox Text="{Binding InputPrize, UpdateSourceTrigger=PropertyChanged}">
-                <TextBox.InputBindings>
-                    <KeyBinding Gesture="Enter" Command="{Binding RegisterCommand}" />
-                </TextBox.InputBindings>
-            </TextBox>
+            <StackPanel>
+                <TextBox Text="{Binding InputPrize.Name, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox.InputBindings>
+                        <KeyBinding Gesture="Enter" Command="{Binding RegisterCommand}" />
+                    </TextBox.InputBindings>
+                </TextBox>
+                <CheckBox Content="確定演出を有効にする" IsChecked="{Binding InputPrize.EnableFinalProduction}" />
+            </StackPanel>
         </Grid>
         <Grid Grid.Row="2" Margin="5">
             <Button Content="戻る" Command="{Binding GoBackCommand}" HorizontalAlignment="Left" />

@@ -1,4 +1,5 @@
 ﻿using LotteryWpf.Common;
+using LotteryWpf.Content.Services;
 using LotteryWpf.Content.Views;
 using Prism.Commands;
 using Prism.Events;
@@ -69,16 +70,6 @@ namespace LotteryWpf.Content.ViewModels
         #endregion
 
         /// <summary>
-        /// 設定情報ファイルパス
-        /// </summary>
-        private static string _configPath = string.Format(@"{0}\{1}", Path.BaseDir, Path.ConfigFileName);
-
-        /// <summary>
-        /// セッション情報
-        /// </summary>
-        private SessionInfo _sessionInfo;
-
-        /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="regionManager"></param>
@@ -96,38 +87,21 @@ namespace LotteryWpf.Content.ViewModels
             CheckHistoryCommand = new DelegateCommand(ExecuteCheckHistoryCommand, CanExecuteCheckHistoryCommand);
 
             // 初期処理
-            CreateConfigFileIfNotExists();
-            _sessionInfo = XmlConverter.DeSerialize<SessionInfo>(_configPath);
+            ConfigDataStore.Initialize();
+            PrizesDataStore.Initialize();
+            SessionsDataStore.Initialize();
 
             // 残り賞品数
             UpdateRemainCount();
         }
 
+        /// <summary>
+        /// 残り賞品数を取得する
+        /// </summary>
         private void UpdateRemainCount()
         {
-            RemainCount = _sessionInfo.Prizes.Count - _sessionInfo.LotteryResults.Count;
+            RemainCount = PrizesDataStore.GetPrizes().Count - SessionsDataStore.GetSessions().Count;
             IsRemainValid = RemainCount <= 0;
-        }
-
-        /// <summary>
-        /// 設定ファイルがない場合作成する
-        /// </summary>
-        private void CreateConfigFileIfNotExists()
-        {
-            // ディレクトリ取得
-            var dirInfo = System.IO.Path.GetDirectoryName(_configPath);
-            System.IO.Directory.CreateDirectory(dirInfo);
-
-            // ファイルが存在しなければ作る
-            if (!System.IO.File.Exists(_configPath))
-            {
-                _sessionInfo = new SessionInfo()
-                {
-                    LotteryResults = new List<LotteryResult>(),
-                    Prizes = new List<string>()
-                };
-                XmlConverter.Serialize(_sessionInfo, _configPath);
-            }
         }
 
         /// <summary>
@@ -136,35 +110,26 @@ namespace LotteryWpf.Content.ViewModels
         private void ExecuteStartCommand()
         {
             // コマンド判定
-            switch (CurrentUserName)
+            if (CurrentUserName.Equals(ConfigDataStore.GetUserName()))
             {
-                case Admin.UserName:
-                    _regionManager.RequestNavigate("ContentRegion", nameof(AdminPage));
-                    break;
-
-                case Admin.ClearSessionCommand:
-                    _sessionInfo = new SessionInfo()
-                    {
-                        LotteryResults = new List<LotteryResult>(),
-                        Prizes = new List<string>()
-                    };
-                    XmlConverter.Serialize(_sessionInfo, _configPath);
-                    UpdateRemainCount();
-                    CurrentUserName = "";
-                    break;
-
-                case Admin.ClearResultsCommand:
-                    _sessionInfo.LotteryResults.Clear();
-                    XmlConverter.Serialize(_sessionInfo, _configPath);
-                    UpdateRemainCount();
-                    CurrentUserName = "";
-                    break;
-
-                default:
-                    _regionManager.RequestNavigate("ContentRegion", nameof(LotteryPage));
-                    _eventAggregator.GetEvent<MessageSentEvent>().Publish(CurrentUserName);
-                    break;
+                _regionManager.RequestNavigate("ContentRegion", nameof(AdminPage));
             }
+            else if (CurrentUserName.Equals(ConfigDataStore.GetClearSessionsCommand()))
+            {
+                SessionsDataStore.Clear();
+                UpdateRemainCount();
+            }
+            else if (CurrentUserName.Equals(ConfigDataStore.GetClearPrizesCommand()))
+            {
+                PrizesDataStore.Clear();
+                UpdateRemainCount();
+            }
+            else
+            {
+                _regionManager.RequestNavigate("ContentRegion", nameof(LotteryPage));
+                _eventAggregator.GetEvent<MessageSentEvent>().Publish(CurrentUserName);
+            }
+            CurrentUserName = "";
         }
 
         /// <summary>
@@ -173,7 +138,10 @@ namespace LotteryWpf.Content.ViewModels
         /// <returns></returns>
         private bool CanExecuteStartCommand()
         {
-            return (!string.IsNullOrEmpty(CurrentUserName) && RemainCount > 0) || CurrentUserName.Equals(Admin.UserName);
+            return (!string.IsNullOrEmpty(CurrentUserName) && RemainCount > 0) || 
+                CurrentUserName.Equals(ConfigDataStore.GetUserName()) ||
+                CurrentUserName.Equals(ConfigDataStore.GetClearPrizesCommand()) ||
+                CurrentUserName.Equals(ConfigDataStore.GetClearSessionsCommand());
         }
 
         /// <summary>
